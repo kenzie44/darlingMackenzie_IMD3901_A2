@@ -1,0 +1,43 @@
+#user-gesture-overlay {
+    position: fixed;
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 9999999;
+}
+
+.center {
+    margin: 0;
+    positon: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(40%, 700%)
+}
+
+#user-gesture-button {
+    display: none;
+    width: 20%;
+    height: 20%;
+    background-color: rgb(129,146,104);
+    color: white;
+    padding: 14px 28px;
+    margin: 0px 10px 8px 10px;
+    border: 5px solid #ffffff;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#user-gesture-button:hover {
+    background-color: rgb(161,161,87);
+}
+
+#loading-animation {
+    display: block;
+    width: 80%;
+    height: 80%;
+}

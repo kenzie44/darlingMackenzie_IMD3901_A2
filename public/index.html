@@ -3,11 +3,36 @@
     <head>
         <title>Make A Wish!</title>
         <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-        <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
-        <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script> 
+        <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>    
+        <script src="js/pick-up.js"></script>
+        <script src="js/wish.js"></script>
+        <link rel="stylesheet" href="css/user-gesture.css">
+        <script>
+            AFRAME.registerComponent('start-experience', {
+                init: function() {
+                    console.log('scene loaded');
+                    document.querySelector('#user-gesture-button').style.display = 'block';
+                }
+            });
+
+            const startExperience = function() {
+                document.querySelector('#user-gesture-overlay').style.display = 'none';
+
+                const ambientSounds = document.querySelectorAll('.ambient');
+                ambientSounds.forEach(function(soundEntity) {
+                    soundEntity.components['sound'].playSound();
+                });
+            };
+        </script>
     </head>
     <body>
-        <a-scene>
+        <div id="user-gesture-overlay">
+            <div class="center">
+                <button id="user-gesture-button" onclick="startExperience();">Enter Experience</button>
+            </div>
+        </div>
+
+        <a-scene start-experience>
             <a-assets timeout="10000">
                 <a-asset-item id="wishing_well" src="/assets/Well.glb" response-type="arraybuffer"></a-asset-item>
                 <a-asset-item id="treasure_chest" src="/assets/handpainted_treasure_chest.glb" response-type="arraybuffer"></a-asset-item>
@@ -18,24 +43,19 @@
             </a-assets>
 
             <a-entity id="camera" position="0 1.6 5" camera wasd-controls look-controls>
-                <a-entity id="light" position="0.5 -0.5 0" light="type:spot; intensity:1.4; castShadow:true; shadowBias:-0.0005; penumbra:0.3"></a-entity>
-                <a-entity cursor="rayOrigin:mouse" raycaster="far:20; interval:200; objects:.interactive;"></a-entity> 
+                <a-entity id="light" position="0.5 -0.5 0" light="type:spot; intensity:2; castShadow:true; shadowBias:-0.0005; penumbra:0.3"></a-entity>
+                <a-entity cursor="rayOrigin:mouse" raycaster="far:20; interval:200; objects:.interactive;"></a-entity>
+                <a-entity id="UI">
+                    <a-entity id="UIText" text="value: You picked up a coin! Click the well to make a wish!; color: black; font: roboto; baseline: bottom;" position="-0.3 -0.4 -0.5" visible="false"></a-entity>
+                </a-entity> 
             </a-entity>
 
             <a-entity id="environment" environment="preset:forest;" shadow></a-entity>
-            <a-entity id="well" sound="src:#water; autoplay: true; volume: 0.25;" position="0 0 0" scale="0.25 0.25 0.25" gltf-model="#wishing_well" shadow="cast: true; receive: false"></a-entity>
-            <a-entity class="interactive coin" position="0 1 0.95" geometry="primitive:cylinder; radius:0.05; height:0.01;" material="color:yellow" shadow
-            animation__Xclick="startEvents: click; property: position; from: 0 1 0.95; to: 0 1 0.3; dur: 1000;"
-            animation__Yclick="startEvents: click; property: position; from: 0 1 0.3; to: 0 0 0.3; dur: 1000; delay: 1000;"
-            animation__Visible="startEvents: click; property: visible; from: true; to: false; dur: 100; delay: 2000;"
-            event-set__click="_event: click; _target:#music; _delay:2000; sound.on: click;"></a-entity>   
-            <a-entity id="instructions" position="-3.5 0.5 2" rotation="-30 75 0" scale="1 1 1" >
-                <a-entity position="0 0 0" geometry="primitive:box; width:1.0; height:1.0; depth:0.2" material="color:white" shadow></a-entity>
-                <a-entity position="-0.45 0.4 0.1" text="value:Instructions; color:black; font:roboto; width:1; anchor:left; baseline:top; wrapCount:12"></a-entity>
-                <a-entity position="-0.45 0.2 0.1" text="value:Toss in the coin and click the music box!; color:black; font:roboto; width:1; anchor:left; baseline:top; wrapCount:18"></a-entity>
-            </a-entity>   
+            
+            <a-entity id="well" wish class="interactive ambient" sound="src:#water; autoplay: false; volume: 0.25;" position="0 0 0" scale="0.25 0.25 0.25" gltf-model="#wishing_well" shadow="cast: true; receive: false"></a-entity>
+            <a-entity class="interactive coin" pick-up position="0 1 0.95" geometry="primitive:cylinder; radius:0.05; height:0.01;" material="color:yellow" shadow></a-entity>   
             <a-entity id="pedestal" position="3.5 0 2" rotation="0 125 0" scale="0.6 0.6 0.6" gltf-model="#stone_pedestal" shadow></a-entity>
-            <a-entity id="music" class="interactive" position="3.5 1.5 2" rotation="15 305 0" scale="0.007 0.007 0.007" gltf-model="#music_box" sound="src:#boxMusic; volume: 0.5;" shadow></a-entity>
+            <a-entity id="music" position="3.5 1.5 2" rotation="15 305 0" scale="0.007 0.007 0.007" gltf-model="#music_box" sound="src:#boxMusic; volume: 0.5; autoplay: false;" shadow></a-entity>
         </a-scene>
     </body>
 </html>
